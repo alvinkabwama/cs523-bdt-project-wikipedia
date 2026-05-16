@@ -93,14 +93,15 @@ the demo.
 |---:|---|---|---|
 | 0:00 – 1:00   | Intro                                       | Both    | Webcams full-frame |
 | 1:00 – 3:00   | Architecture overview                       | Alvin   | `docs/architecture.md` ASCII diagram |
-| 3:00 – 4:30   | Data source: Wikimedia EventStreams (SSE)   | Mercel  | Raw SSE feed in a browser tab |
-| 4:30 – 6:30   | Part 1 — Kafka producer                     | Alvin   | Terminal A — `.\1-run-producer.bat` |
-| 6:30 – 9:30   | Part 2 — Spark Structured Streaming         | Both    | Terminal B + YARN UI at `:8088` |
-| 9:30 – 11:30  | Part 3 — HBase sink                         | Mercel  | `hbase shell` showing populated tables |
-| 11:30 – 14:00 | Part 4 — Streamlit dashboard                | Mercel  | Terminal D + browser at `:8501` |
-| 14:00 – 17:00 | Part 5 — Bonus Spark SQL static-data join   | Alvin   | Terminal C + dashboard bonus charts |
-| 17:00 – 18:30 | What we learned                             | Both    | Faces full-frame |
-| 18:30 – 20:00 | Wrap                                        | Both    | Repo URL + thanks |
+| 3:00 – 4:00   | Codebase tour                               | Mercel  | File tree in VS Code / explorer |
+| 4:00 – 5:30   | Data source: Wikimedia EventStreams (SSE)   | Mercel  | Raw SSE feed in a browser tab |
+| 5:30 – 7:30   | Part 1 — Kafka producer                     | Alvin   | Terminal A — `.\1-run-producer.bat` |
+| 7:30 – 10:30  | Part 2 — Spark Structured Streaming         | Both    | Terminal B + YARN UI at `:8088` |
+| 10:30 – 12:30 | Part 3 — HBase sink                         | Mercel  | `hbase shell` showing populated tables |
+| 12:30 – 15:00 | Part 4 — Streamlit dashboard                | Mercel  | Terminal D + browser at `:8501` |
+| 15:00 – 18:00 | Part 5 — Bonus Spark SQL static-data join   | Alvin   | Terminal C + dashboard bonus charts |
+| 18:00 – 19:00 | What we learned                             | Both    | Faces full-frame |
+| 19:00 – 20:00 | Wrap                                        | Both    | Repo URL + thanks |
 
 ---
 
@@ -156,7 +157,39 @@ the ASCII diagram visible.
 
 ---
 
-### 3:00 — Data source: Wikimedia EventStreams
+### 3:00 — Codebase tour
+
+**Who & where**: Mercel speaks, screen shares the repo file tree (either
+the VS Code Explorer pane open at the repo root, or a `tree` / `ls`
+output in a terminal — whichever is easier to read on camera).
+
+**What to say** (Mercel):
+
+- "Here is the repository. We deliberately kept it flat and small —
+  under 500 lines of Python across the whole pipeline. The three code
+  folders are `producer/`, `spark_app/`, and `dashboard/`. `producer/`
+  contains one file, `producer.py`, which reads the Wikimedia SSE feed
+  and publishes to Kafka. `spark_app/` has two PySpark jobs:
+  `stream_processor.py`, the main streaming application with the three
+  queries Alvin described, and `enrich_with_join.py`, the bonus Spark
+  SQL join. `dashboard/` has `app.py`, the Streamlit app. Under
+  `data/static/` is the 85-row JSON Lines file with our language
+  metadata, which gets uploaded to HDFS at setup time."
+- "At the root you can see `docker-compose.yml` for the four lab
+  containers, `setup_container.sh` for the one-time bootstrap, and the
+  four numbered `.bat` files we'll launch in this demo — one per
+  pipeline component. The `docs/` folder has the architecture diagram,
+  this script, and the screenshots in the README. Everything you'll see
+  on screen for the next sixteen minutes comes from those few files —
+  no hidden infrastructure, no managed services. Just open-source
+  components glued together with a small amount of Python."
+
+**What you should see**: a tidy file tree where the viewer can
+visually count the small number of folders and files involved.
+
+---
+
+### 4:00 — Data source: Wikimedia EventStreams
 
 **Who & where**: Mercel speaks, screen shares
 `https://stream.wikimedia.org/v2/stream/recentchange` in a browser tab.
@@ -176,7 +209,7 @@ past in the browser tab.
 
 ---
 
-### 4:30 — Part 1: Kafka producer
+### 5:30 — Part 1: Kafka producer
 
 **Who & where**: Alvin speaks, screen shares Terminal A.
 
@@ -213,7 +246,7 @@ docker exec -it kafka-server kafka-console-consumer --bootstrap-server kafka-ser
 
 ---
 
-### 6:30 — Part 2: Spark Structured Streaming
+### 7:30 — Part 2: Spark Structured Streaming
 
 **Who & where**: Mercel runs the command in Terminal B; Alvin then takes
 the mic to walk through the YARN UI and the Spark UI.
@@ -258,7 +291,7 @@ Switch to the Spark UI at `http://localhost:4040`.
 
 ---
 
-### 9:30 — Part 3: HBase sink
+### 10:30 — Part 3: HBase sink
 
 **Who & where**: Mercel speaks. Open `hbase shell` in any free
 PowerShell window (the producer and Spark stream don't need to be
@@ -321,7 +354,7 @@ exit
 
 ---
 
-### 11:30 — Part 4: Streamlit dashboard
+### 12:30 — Part 4: Streamlit dashboard
 
 **Who & where**: Mercel runs the command in Terminal D, then drives the
 browser walkthrough.
@@ -373,7 +406,7 @@ Open `http://localhost:8501` in the browser.
 
 ---
 
-### 14:00 — Part 5: Bonus Spark SQL static-data join
+### 15:00 — Part 5: Bonus Spark SQL static-data join
 
 **Who & where**: Alvin runs the command in Terminal C. Mercel keeps the
 dashboard tab visible alongside (or comes back to it at the end of the
@@ -441,7 +474,7 @@ docker exec cs523bdt-lab bash -c "echo \"scan 'wikipedia_enriched', {LIMIT => 1}
 
 ---
 
-### 17:00 — What we learned
+### 18:00 — What we learned
 
 **Who & where**: Both teammates, webcams full-frame.
 
@@ -460,7 +493,7 @@ docker exec cs523bdt-lab bash -c "echo \"scan 'wikipedia_enriched', {LIMIT => 1}
 
 ---
 
-### 18:30 — Wrap
+### 19:00 — Wrap
 
 **Who & where**: Both teammates, webcams full-frame.
 
