@@ -480,16 +480,23 @@ docker exec cs523bdt-lab bash -c "echo \"scan 'wikipedia_enriched', {LIMIT => 1}
 
 **What to say**:
 
-- **Alvin**: "The most striking thing about this source is that it's
-  the genuine push-streaming case. The crypto and flights variants we
-  considered both involve our producer driving the cadence — even when
-  we use WebSockets for Binance, we throttle. Wikimedia's SSE feed is
-  the source actually choosing when to send each event."
-- **Mercel**: "On the architecture side, putting Kafka between the
-  producer and everything downstream meant we could swap out the source
-  entirely while keeping Spark, HBase, and the dashboard unchanged.
-  That decoupling is exactly the property the lecturer described in the
-  project transcript."
+- **Alvin**: "The biggest mindset shift for us was leaning into HBase's
+  wide-column model instead of fighting it. In a relational database we
+  would have normalized the live snapshot and the windowed aggregates
+  into separate tables and joined them on wiki code. In HBase we kept
+  them in two separate tables but designed each row key around the
+  question being asked of it — the wiki code alone for live lookups,
+  and `<wiki>|<reverse-epoch>` for window scans. Two tables, two access
+  patterns, zero joins on the read path. That made the dashboard
+  queries trivially fast."
+- **Mercel**: "What surprised me most about Spark Structured Streaming
+  is that the code is almost identical to the batch DataFrame API we
+  used in earlier labs. Same `groupBy(window(...))` syntax, same SQL
+  functions. The streaming part is essentially a couple of extra knobs
+  — a watermark to keep windowed state from growing forever, and a
+  trigger to control output cadence. Once we had the schema right, the
+  streaming application looked just like a batch query we already knew
+  how to write — which is exactly the unification Spark is selling."
 
 ---
 
