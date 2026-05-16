@@ -1,0 +1,43 @@
+# CS523 final project (WIKIPEDIA variant) -- HBase schema
+# Apply with: hbase shell /opt/project/hbase/schema.hbase
+
+# -----------------------------------------------------------------------------
+# Table 1: wikipedia_live -- latest edit per wiki, keyed by wiki code
+#
+# Row key: wiki (e.g., "enwiki", "frwiki", "commonswiki")
+# Column families:
+#   info  -- type, title, user, namespace, server_name
+#   stats -- length_old, length_new, length_delta
+#   meta  -- timestamp, bot, minor, ingestion_ts
+# -----------------------------------------------------------------------------
+create 'wikipedia_live',
+  {NAME => 'info',  VERSIONS => 1},
+  {NAME => 'stats', VERSIONS => 1},
+  {NAME => 'meta',  VERSIONS => 1}
+
+# -----------------------------------------------------------------------------
+# Table 2: wikipedia_agg -- windowed per-wiki metrics
+#
+# Row key: "<wiki>|<reverse_epoch>" -- newest windows scan first
+# Column family:
+#   m -- count, avg_delta, window_end, wiki
+# -----------------------------------------------------------------------------
+create 'wikipedia_agg',
+  {NAME => 'm', VERSIONS => 1}
+
+# -----------------------------------------------------------------------------
+# Table 3 (BONUS): wikipedia_enriched -- live stream joined with language
+# metadata from /user/static/language_metadata.json on wiki code.
+#
+# Row key: wiki
+# Column families:
+#   info   -- type, title, user, bot
+#   stats  -- length_delta
+#   ref    -- language, continent, region, primary_country  (from join)
+# -----------------------------------------------------------------------------
+create 'wikipedia_enriched',
+  {NAME => 'info',  VERSIONS => 1},
+  {NAME => 'stats', VERSIONS => 1},
+  {NAME => 'ref',   VERSIONS => 1}
+
+list

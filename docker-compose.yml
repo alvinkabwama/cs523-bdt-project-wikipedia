@@ -1,0 +1,63 @@
+services:
+  zookeeper:
+    image: mmukadam/zookeeper:v3.8
+    container_name: zookeeper-server
+    ports:
+      - "2181:2181"
+    environment:
+      ZOO_4LW_COMMANDS_WHITELIST: "*"
+
+  kafka:
+    image: mmukadam/kafka:v7.4.0
+    container_name: kafka-server
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-server:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-server:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  postgres-db:
+    image: mmukadam/postgres:v16
+    container_name: hive-metastore-db
+    environment:
+      POSTGRES_DB: hive_metastore
+      POSTGRES_USER: hive
+      POSTGRES_PASSWORD: hivepassword
+    volumes:
+      - hive_db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  cs523bdt-lab:
+    image: mmukadam/cs523bdt-lab:v4.0
+    container_name: cs523bdt-lab
+    hostname: localhost
+    depends_on:
+      - postgres-db
+      - zookeeper
+      - kafka
+    environment:
+      - TZ=America/Chicago
+      - CLASS_PASS=DEcs523bdt_Feb2026
+    ports:
+      - "9870:9870"
+      - "8088:8088"
+      - "10000:10000"
+      - "16010:16010"
+      - "9090:9090"
+      - "4040:4040"
+      - "8501:8501"
+    volumes:
+      - ./my_code:/opt/my_code
+      - .:/opt/project
+      - /etc/localtime:/etc/localtime:ro
+    tty: true
+
+volumes:
+  hive_db_data:
