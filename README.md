@@ -455,8 +455,7 @@ cs523-bdt-project-wikipedia/
 │   ├── app.py                  Streamlit dashboard
 │   └── requirements.txt
 ├── docs/
-│   ├── architecture.md         Detailed design document
-│   └── demo-script.md          Recording walkthrough
+│   └── architecture.md         Detailed design document
 └── .streamlit/
     └── config.toml             Dashboard color theme
 ```

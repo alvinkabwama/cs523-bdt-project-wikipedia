@@ -238,8 +238,7 @@ windowed rows for Q2/Q3) so a driver-side `.collect()` is safe.
   container is recreated but ZooKeeper is not, HMaster waits forever for
   the ghost RegionServer that ZooKeeper still believes is alive. Fix:
   `docker exec zookeeper-server bash -c "echo deleteall /hbase | zkCli.sh -server localhost:2181"`
-  followed by an HBase restart. Documented in `docs/demo-script.md`
-  under "Backup plans".
+  followed by an HBase restart.
 
 ---
 
